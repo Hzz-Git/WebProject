@@ -1,4 +1,4 @@
-Copy{
+
   "name": "webproject",
   "version": "1.0.0",
   "scripts": {
@@ -6,6 +6,5 @@ Copy{
     "build": "echo 'No build step required'"
   },
   "dependencies": {
-    // your dependencies here
   }
 }
