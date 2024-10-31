@@ -2,7 +2,7 @@
   "name": "webproject",
   "version": "1.0.0",
   "scripts": {
-    "start": "node index.html",
+    "start": "node index.js",
     "build": "echo 'No build step required'"
   },
   "dependencies": {
