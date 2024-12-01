@@ -5,9 +5,9 @@ require('dotenv').config();
 
 const app = express();
 
-// CORS Configuration
+// Set up CORS middleware globally
 app.use(cors({
-  origin: 'https://web-project-2oaz.vercel.app', // Allow only requests from your front-end URL
+  origin: 'https://web-project-2oaz.vercel.app', // Replace with your actual front-end URL
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type'],
   credentials: true, // Allow credentials if needed
