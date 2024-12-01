@@ -14,7 +14,7 @@ const ContactForm = () => {
     setStatus('sending');
   
     try {
-      console.log('Attempting to send message:', formData); 
+      console.log('Attempting to send message:', formData);
   
       const response = await fetch('https://web-project-2oaz.vercel.app/api/messages', {
         method: 'POST',
@@ -25,7 +25,13 @@ const ContactForm = () => {
       });
   
       if (!response.ok) {
-        const errorData = await response.json();
+        // Try to parse the error response, if it's available as JSON
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch {
+          throw new Error('Unexpected response from the server. Please try again.');
+        }
         throw new Error(errorData.error || 'Failed to send message');
       }
   
@@ -37,6 +43,7 @@ const ContactForm = () => {
       alert(`Failed to send message: ${error.message}`);
     }
   };
+  
 
   return (
     <div className="contact-form-container">
