@@ -5,11 +5,12 @@ require('dotenv').config();
 
 const app = express();
 
-// Updated CORS settings
+// Set up CORS middleware globally
 app.use(cors({
-  origin: 'https://web-project-2oaz.vercel.app', // Allow only requests from your frontend URL
-  methods: ['GET', 'POST', 'OPTIONS'], // Allow necessary HTTP methods
-  allowedHeaders: ['Content-Type'], // Allow specific headers
+  origin: 'https://web-project-2oaz.vercel.app', // Replace with your actual front-end URL
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type'],
+  credentials: true, // Allow credentials if needed
 }));
 
 app.use(express.json());
@@ -34,7 +35,13 @@ const db = new sqlite3.Database('./messages.db', (err) => {
   }
 });
 
-app.options('/api/messages', cors()); // Explicitly add support for OPTIONS preflight requests
+// Handle preflight requests for CORS
+app.options('/api/messages', (req, res) => {
+  res.header('Access-Control-Allow-Origin', 'https://web-project-2oaz.vercel.app');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.sendStatus(200);
+});
 
 app.post('/api/messages', (req, res) => {
   const { name, email, message } = req.body;
