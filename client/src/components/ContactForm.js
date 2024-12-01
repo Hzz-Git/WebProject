@@ -16,7 +16,7 @@ const ContactForm = () => {
     try {
       console.log('Attempting to send message:', formData); 
   
-      const response = await fetch('https://web-project-2oaz-bxheafur5-hzz-gits-projects.vercel.app/api/messages', {
+      const response = await fetch('https://web-project-2oaz.vercel.app/api/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
