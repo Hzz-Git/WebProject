@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const app = express();
 
-// Set up CORS middleware globally
+/
 app.use(cors({
   origin: 'https://web-project-2oaz.vercel.app', // Replace with your actual front-end URL
   methods: ['GET', 'POST', 'OPTIONS'],
@@ -46,7 +46,10 @@ app.options('/api/messages', (req, res) => {
 app.post('/api/messages', (req, res) => {
   const { name, email, message } = req.body;
 
+  console.log('Received POST request with body:', req.body); // Add detailed log of request data
+
   if (!name || !email || !message) {
+    console.error('Validation Error: All fields are required');
     return res.status(400).json({ error: 'All fields are required. Please ensure you fill out the name, email, and message fields.' });
   }
 
@@ -56,6 +59,7 @@ app.post('/api/messages', (req, res) => {
       return res.status(500).json({ error: 'Failed to save the message due to a server issue. Please try again later.' });
     }
 
+    console.log('Message saved successfully with ID:', this.lastID);
     res.status(200).json({ id: this.lastID, message: 'Message saved successfully.' });
   });
 });
