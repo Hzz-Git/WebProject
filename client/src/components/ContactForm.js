@@ -1,6 +1,6 @@
 // src/components/ContactForm.js
 import React, { useState } from 'react';
-import { supabase } from '../utils/supabaseClient';
+
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -13,25 +13,22 @@ const ContactForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('sending');
-
+  
     try {
       console.log('Attempting to send message:', formData); // Debug log
-
-      const { error } = await supabase
-        .from('messages')
-        .insert([
-          {
-            name: formData.name,
-            email: formData.email,
-            message: formData.message
-          }
-        ]);
-
-      if (error) {
-        console.error('Supabase error:', error); // Debug log
-        throw error;
+  
+      const response = await fetch('http://localhost:3001/api/notes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to send message');
       }
-
+  
       setStatus('success');
       setFormData({ name: '', email: '', message: '' });
     } catch (error) {
@@ -39,6 +36,7 @@ const ContactForm = () => {
       setStatus('error');
     }
   };
+  
 
   return (
     <div className="contact-form-container">
