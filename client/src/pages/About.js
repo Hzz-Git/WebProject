@@ -1,10 +1,11 @@
 import React from 'react';
 import { Mail, Linkedin, Github } from 'lucide-react';
+import ContactForm from '../components/ContactForm';  // Add this import
 
 const About = () => {
   return (
     <div className="container about-section">
-      <h1 className="about-title mb-5">About Me</h1>
+      <h1 className="about-title">About Me</h1>
 
       <div className="about-content">
         <p className="intro-paragraph">
@@ -21,9 +22,7 @@ const About = () => {
           businesses. I am passionate about IT infrastructure and currently expanding my knowledge in{' '}
           <span className="highlight">network management</span>,{' '}
           <span className="highlight">system integration</span>, and{' '}
-          <span className="highlight">cloud computing</span>. I strongly believe in{' '}
-          <span className="highlight">continuous learning</span> and creating projects with{' '}
-          <span className="highlight">real impact</span>.
+          <span className="highlight">cloud computing</span>.
         </p>
 
         <p className="motivation-paragraph">
@@ -65,6 +64,12 @@ const About = () => {
               <Github size={20} />
               <span>GitHub</span>
             </a>
+          </div>
+
+          {/* Add this new section */}
+          <div className="message-section">
+            <h2>Or send me a message directly ✍️</h2>
+            <ContactForm />
           </div>
         </div>
       </div>
