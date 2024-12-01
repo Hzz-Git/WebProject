@@ -10,14 +10,15 @@ const ContactForm = () => {
   });
   const [status, setStatus] = useState('');
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('sending');
   
     try {
-      console.log('Attempting to send message:', formData); // Debug log
+      console.log('Attempting to send message:', formData); 
   
-      const response = await fetch('http://localhost:3001/api/notes', {
+  
+      const response = await fetch('https://web-project-2oaz-bxheafur5-hzz-gits-projects.vercel.app/api/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -26,7 +27,8 @@ const ContactForm = () => {
       });
   
       if (!response.ok) {
-        throw new Error('Failed to send message');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to send message');
       }
   
       setStatus('success');
@@ -34,8 +36,10 @@ const ContactForm = () => {
     } catch (error) {
       console.error('Error sending message:', error);
       setStatus('error');
+      alert(`Failed to send message: ${error.message}`);
     }
   };
+  
   
 
   return (
