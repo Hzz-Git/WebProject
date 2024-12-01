@@ -5,9 +5,16 @@ require('dotenv').config();
 
 const app = express();
 
-app.use(cors());
-app.use(express.json());
+// Updated CORS settings
+const corsOptions = {
+  origin: 'https://web-project-2oaz-odpr8hdj0-hzz-gits-projects.vercel.app/', 
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type'],
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 
+app.use(express.json());
 
 const db = new sqlite3.Database('./messages.db', (err) => {
   if (err) {
@@ -29,7 +36,7 @@ const db = new sqlite3.Database('./messages.db', (err) => {
   }
 });
 
-
+app.options('/api/messages', cors(corsOptions));
 app.post('/api/messages', (req, res) => {
   const { name, email, message } = req.body;
 
