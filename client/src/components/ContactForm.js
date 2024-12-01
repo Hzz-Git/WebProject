@@ -25,14 +25,16 @@ const ContactForm = () => {
       });
   
       if (!response.ok) {
-        // Try to parse the error response, if it's available as JSON
-        let errorData;
+        let errorMessage = 'Failed to send message';
+  
         try {
-          errorData = await response.json();
-        } catch {
-          throw new Error('Unexpected response from the server. Please try again.');
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch (e) {
+          console.error('Error parsing error response:', e);
         }
-        throw new Error(errorData.error || 'Failed to send message');
+  
+        throw new Error(errorMessage);
       }
   
       setStatus('success');
