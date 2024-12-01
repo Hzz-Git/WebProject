@@ -1,6 +1,5 @@
-// src/components/ContactForm.js
-import React, { useState } from 'react';
 
+import React, { useState } from 'react';
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -10,13 +9,12 @@ const ContactForm = () => {
   });
   const [status, setStatus] = useState('');
 
-  const handleSubmit = async (e) => const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('sending');
   
     try {
       console.log('Attempting to send message:', formData); 
-  
   
       const response = await fetch('https://web-project-2oaz-bxheafur5-hzz-gits-projects.vercel.app/api/messages', {
         method: 'POST',
@@ -39,8 +37,6 @@ const ContactForm = () => {
       alert(`Failed to send message: ${error.message}`);
     }
   };
-  
-  
 
   return (
     <div className="contact-form-container">
