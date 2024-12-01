@@ -6,13 +6,11 @@ require('dotenv').config();
 const app = express();
 
 // Updated CORS settings
-const corsOptions = {
-  origin: 'https://web-project-2oaz-odpr8hdj0-hzz-gits-projects.vercel.app/', 
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type'],
-  optionsSuccessStatus: 200,
-};
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: 'https://web-project-2oaz.vercel.app', // Allow only requests from your frontend URL
+  methods: ['GET', 'POST', 'OPTIONS'], // Allow necessary HTTP methods
+  allowedHeaders: ['Content-Type'], // Allow specific headers
+}));
 
 app.use(express.json());
 
@@ -36,7 +34,8 @@ const db = new sqlite3.Database('./messages.db', (err) => {
   }
 });
 
-app.options('/api/messages', cors(corsOptions));
+app.options('/api/messages', cors()); // Explicitly add support for OPTIONS preflight requests
+
 app.post('/api/messages', (req, res) => {
   const { name, email, message } = req.body;
 
