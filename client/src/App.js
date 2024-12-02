@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Home from './pages/Home';
@@ -21,9 +21,13 @@ function App() {
     });
   };
 
+  useEffect(() => {
+    document.body.className = isDarkMode ? 'shared-dark' : 'shared-light';
+  }, [isDarkMode]);
+
   return (
     <Router>
-      <div className={`page-wrapper ${isDarkMode ? "shared-dark" : "shared-light"}`}>
+      <div className="app-wrapper">
         <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
         <Routes>
           <Route path="/" element={<Home isDarkMode={isDarkMode} />} />
