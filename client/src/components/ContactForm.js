@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 
 const ContactForm = () => {
@@ -12,40 +11,29 @@ const ContactForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('sending');
-  
+
     try {
-      console.log('Attempting to send message:', formData);
-  
-      const response = await fetch('https://web-project-2oaz.vercel.app/api/messages', {
+      const response = await fetch('https://web-project-flax-nu.vercel.app/api/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData)
       });
-  
+
+      const data = await response.json();
+
       if (!response.ok) {
-        let errorMessage = 'Failed to send message';
-  
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.error || errorMessage;
-        } catch (e) {
-          console.error('Error parsing error response:', e);
-        }
-  
-        throw new Error(errorMessage);
+        throw new Error(data.error || 'Failed to send message');
       }
-  
+
       setStatus('success');
       setFormData({ name: '', email: '', message: '' });
     } catch (error) {
       console.error('Error sending message:', error);
       setStatus('error');
-      alert(`Failed to send message: ${error.message}`);
     }
   };
-  
 
   return (
     <div className="contact-form-container">

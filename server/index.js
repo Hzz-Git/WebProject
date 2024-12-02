@@ -1,70 +1,80 @@
+// server/index.js
 const express = require('express');
 const cors = require('cors');
-const sqlite3 = require('sqlite3').verbose();
+const { Pool } = require('pg');
 require('dotenv').config();
 
 const app = express();
 
-/
+// Middleware
 app.use(cors({
-  origin: 'https://web-project-2oaz.vercel.app', // Replace with your actual front-end URL
+  origin: 'https://web-project-2oaz.vercel.app',
   methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type'],
-  credentials: true, // Allow credentials if needed
+  allowedHeaders: ['Content-Type']
 }));
 
 app.use(express.json());
 
-const db = new sqlite3.Database('./messages.db', (err) => {
-  if (err) {
-    console.error('Error opening database:', err);
-  } else {
-    console.log('Connected to SQLite database');
-    db.run(`
-      CREATE TABLE IF NOT EXISTS messages (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        email TEXT,
-        message TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )`, (err) => {
-        if (err) {
-          console.error('Error creating messages table:', err);
-        }
-      });
+// PostgreSQL connection
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
   }
 });
 
-// Handle preflight requests for CORS
-app.options('/api/messages', (req, res) => {
-  res.header('Access-Control-Allow-Origin', 'https://web-project-2oaz.vercel.app');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  res.sendStatus(200);
+// Create messages table if it doesn't exist
+pool.query(`
+  CREATE TABLE IF NOT EXISTS messages (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+  )
+`, (err) => {
+  if (err) {
+    console.error('Error creating table:', err);
+  } else {
+    console.log('Table created or already exists');
+  }
 });
 
-app.post('/api/messages', (req, res) => {
+// Message endpoint
+app.post('/api/messages', async (req, res) => {
   const { name, email, message } = req.body;
 
-  console.log('Received POST request with body:', req.body); // Add detailed log of request data
+  try {
+    const result = await pool.query(
+      'INSERT INTO messages (name, email, message) VALUES ($1, $2, $3) RETURNING *',
+      [name, email, message]
+    );
 
-  if (!name || !email || !message) {
-    console.error('Validation Error: All fields are required');
-    return res.status(400).json({ error: 'All fields are required. Please ensure you fill out the name, email, and message fields.' });
+    res.json({
+      success: true,
+      message: 'Message sent successfully',
+      data: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Error saving message:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to save message'
+    });
   }
+});
 
-  db.run(`INSERT INTO messages (name, email, message) VALUES (?, ?, ?)`, [name, email, message], function (err) {
-    if (err) {
-      console.error('Database error:', err);
-      return res.status(500).json({ error: 'Failed to save the message due to a server issue. Please try again later.' });
-    }
-
-    console.log('Message saved successfully with ID:', this.lastID);
-    res.status(200).json({ id: this.lastID, message: 'Message saved successfully.' });
-  });
+app.get('/api/test', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT NOW()');
+    res.json({ success: true, time: result.rows[0].now });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
