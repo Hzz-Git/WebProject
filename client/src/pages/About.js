@@ -66,7 +66,6 @@ const About = () => {
             </a>
           </div>
 
-          {/* Add this new section */}
           <div className="message-section">
             <h2>Or send me a message directly ✍️</h2>
             <ContactForm />

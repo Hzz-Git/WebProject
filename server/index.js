@@ -118,3 +118,40 @@ app.use((err, req, res, next) => {
     error: 'Something broke on the server'
   });
 });
+
+app.get('/api/projects', async (req, res) => {
+  try {
+    // Query PostgreSQL for all projects
+    const result = await pool.query(`
+      SELECT * FROM projects 
+      ORDER BY created_at DESC
+    `);
+
+    // Log for debugging
+    console.log('Fetched projects:', result.rows);
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'Failed to fetch projects' });
+  }
+});
+
+// Endpoint to add a new project
+app.post('/api/projects', async (req, res) => {
+  const { title, description, status, github_url, tech_stack } = req.body;
+
+  try {
+    const result = await pool.query(
+      `INSERT INTO projects (title, description, status, github_url, tech_stack) 
+       VALUES ($1, $2, $3, $4, $5) 
+       RETURNING *`,
+      [title, description, status, github_url, tech_stack]
+    );
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error adding project:', error);
+    res.status(500).json({ error: 'Failed to add project' });
+  }
+});
