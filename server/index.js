@@ -51,20 +51,20 @@ pool.query(`
 
 // Test endpoint
 app.get('/api/test', async (req, res) => {
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false
+    }
+  });
   try {
     const result = await pool.query('SELECT NOW()');
-    res.json({ 
-      success: true, 
-      message: 'Server is running',
-      time: result.rows[0].now 
-    });
+    res.json({ success: true, message: 'Server is running', time: result.rows[0].now });
   } catch (error) {
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
+
 
 // CORS preflight
 app.options('/api/messages', cors());
