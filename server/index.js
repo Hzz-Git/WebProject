@@ -66,7 +66,7 @@ app.get('/api/test', async (req, res) => {
 });
 
 
-// CORS preflight
+
 app.options('/api/messages', cors());
 
 // Messages endpoint
@@ -121,13 +121,13 @@ app.use((err, req, res, next) => {
 
 app.get('/api/projects', async (req, res) => {
   try {
-    // Query PostgreSQL for all projects
+    
     const result = await pool.query(`
       SELECT * FROM projects 
       ORDER BY created_at DESC
     `);
 
-    // Log for debugging
+    
     console.log('Fetched projects:', result.rows);
 
     res.json(result.rows);
@@ -137,7 +137,7 @@ app.get('/api/projects', async (req, res) => {
   }
 });
 
-// Endpoint to add a new project
+
 app.post('/api/projects', async (req, res) => {
   const { title, description, status, github_url, tech_stack } = req.body;
 
